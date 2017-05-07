@@ -1,83 +1,52 @@
-import sys
+import Tkinter
+from Tkinter import *
+from ScrolledText import *
+import tkFileDialog
+import tkMessageBox
 
-v=sys.version()
+root = Tkinter.Tk(className=" Just another Text Editor")
+textPad = ScrolledText(root, width=100, height=80)
 
-if "2.7" in v:
+# create a menu & define functions for each menu item
 
-    from Tkinter import * 
+def open_command():
+        file = tkFileDialog.askopenfile(parent=root,mode='rb',title='Select a file')
+        if file != None:
+            contents = file.read()
+            textPad.insert('1.0',contents)
+            file.close()
 
-    import tkFileDialog
+def save_command(self):
+    file = tkFileDialog.asksaveasfile(mode='w')
+    if file != None:
+    # slice off the last character from get, as an extra return is added
+        data = self.textPad.get('1.0', END+'-1c')
+        file.write(data)
+        file.close()
+        
+def exit_command():
+    if tkMessageBox.askokcancel("Quit", "Do you really want to quit?"):
+        root.destroy()
 
-elif "3.3" in v or "3.4" in v:
+def about_command():
+    label = tkMessageBox.showinfo("About", "Just Another TextPad \n Copyright \n No rights left to reserve")
+        
 
-    from tkinter import *
+def dummy():
+    print "I am a Dummy Command, I will be removed in the next step"
+menu = Menu(root)
+root.config(menu=menu)
+filemenu = Menu(menu)
+menu.add_cascade(label="File", menu=filemenu)
+filemenu.add_command(label="New", command=dummy)
+filemenu.add_command(label="Open...", command=open_command)
+filemenu.add_command(label="Save", command=save_command)
+filemenu.add_separator()
+filemenu.add_command(label="Exit", command=exit_command)
+helpmenu = Menu(menu)
+menu.add_cascade(label="Help", menu=helpmenu)
+helpmenu.add_command(label="About...", command=about_command)
 
-    import tkinter.tkFileDialog
-
-root=Tk("Text Editor")
-text=Text(root) 
-
-text.grid() 
-
-def saveas():
-
-
-    global text
-
-
-    t = text.get("1.0", "end-1c")
-
-
-    savelocation=tkFileDialog.asksaveasfilename()
-
-
-    file1=open(savelocation, "w+")
-
-
-    file1.write(t)
-
-
-    file1.close()
-
-button=Button(root, text="Save", command=saveas) 
-
-button.grid()
-
-def FontHelvetica():
-
-
-    global text
-
-
-    text.config(font="Helvetica")
-
-def FontCourier():
-
-
-    global text
-
-
-    text.config(font="Courier")
-
-font=Menubutton(root, text="Font") 
-
-font.grid() 
-
-font.menu=Menu(font, tearoff=0) 
-
-font["menu"]=font.menu
-
-Helvetica=IntVar() 
-
-arial=IntVar() 
-
-times=IntVar() 
-
-Courier=IntVar()
-
-font.menu.add_checkbutton(label="Courier", variable=Courier, 
-command=FontCourier)
-font.menu.add_checkbutton(label="Helvetica", variable=helvetica,
-command=FontHelvetica) 
-
+#
+textPad.pack()
 root.mainloop()
